@@ -53,7 +53,8 @@ Folder names are nouns. Each noun names what lives in that folder. When you add 
 ├── backend/    Python server application
 ├── frontend/   React and TypeScript single-page application
 ├── data/       Local runtime data: SQLite database, uploads (not committed)
-└── docs/       Documentation and architecture decision records
+├── docs/       Documentation and architecture decision records
+└── hiring/     Job descriptions, one folder per position (e.g. hiring/ceo/ceo.md)
 ```
 
 ## Commands
