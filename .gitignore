@@ -1,0 +1,17 @@
+# Environment
+.venv/
+
+# Python caches
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Local runtime data
+data/
+
+# Editor swap files
+*.swp
+
+# Local Claude Code settings and session logs
+.claude/settings.local.json
+*.jsonl

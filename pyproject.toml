@@ -1,0 +1,20 @@
+[project]
+name = "onboarding-interview"
+version = "0.1.0"
+description = "Local app for semi-autonomous candidate interviews and screening"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "pydantic>=2",
+    "anthropic",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+    "ty",
+]
+
+[tool.uv]
+package = false
