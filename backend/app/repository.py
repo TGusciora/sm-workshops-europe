@@ -1,0 +1,308 @@
+"""All SQL lives here. Routes and services call these methods, never SQL directly."""
+
+import json
+import sqlite3
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any, Literal
+
+
+def now() -> str:
+    return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+@dataclass(frozen=True)
+class Position:
+    id: int
+    slug: str
+    title: str
+
+
+@dataclass(frozen=True)
+class AiOutput:
+    id: int
+    kind: str
+    model_id: str
+    prompt_version: str
+    auth_method: str
+    status: str
+    output: str | None
+    error: str | None
+
+
+@dataclass(frozen=True)
+class ChatMessage:
+    id: int
+    role: Literal["user", "assistant"]
+    content: str
+    created_at: str
+
+
+@dataclass(frozen=True)
+class Draft:
+    id: int
+    position_id: int
+    ai_output_id: int
+    text: str
+    status: str
+
+
+@dataclass(frozen=True)
+class Question:
+    id: int
+    position_id: int
+    stage: str
+    ai_output_id: int
+    question: str
+    purpose: str
+    good_answer: str
+    status: str
+
+
+class Repository:
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self.conn = conn
+
+    # Positions
+
+    def create_position(self, slug: str, title: str) -> Position:
+        with self.conn:
+            cur = self.conn.execute(
+                "INSERT INTO positions (slug, title, created_at) VALUES (?, ?, ?)",
+                (slug, title, now()),
+            )
+        return Position(id=cur.lastrowid or 0, slug=slug, title=title)
+
+    def get_position(self, slug: str) -> Position | None:
+        row = self.conn.execute(
+            "SELECT id, slug, title FROM positions WHERE slug = ?", (slug,)
+        ).fetchone()
+        return Position(**dict(row)) if row else None
+
+    def get_position_by_id(self, position_id: int) -> Position | None:
+        row = self.conn.execute(
+            "SELECT id, slug, title FROM positions WHERE id = ?", (position_id,)
+        ).fetchone()
+        return Position(**dict(row)) if row else None
+
+    def list_positions(self) -> list[Position]:
+        rows = self.conn.execute(
+            "SELECT id, slug, title FROM positions ORDER BY title"
+        ).fetchall()
+        return [Position(**dict(row)) for row in rows]
+
+    # AI output records
+
+    def record_ai_output(
+        self,
+        *,
+        kind: str,
+        inputs: dict[str, Any],
+        model_id: str,
+        prompt_version: str,
+        auth_method: str,
+        status: str,
+        output: str | None,
+        error: str | None,
+    ) -> int:
+        with self.conn:
+            cur = self.conn.execute(
+                """
+                INSERT INTO ai_outputs
+                    (kind, inputs, model_id, prompt_version, auth_method, status, output, error, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    kind,
+                    json.dumps(inputs, ensure_ascii=False),
+                    model_id,
+                    prompt_version,
+                    auth_method,
+                    status,
+                    output,
+                    error,
+                    now(),
+                ),
+            )
+        return cur.lastrowid or 0
+
+    def get_ai_output(self, output_id: int) -> AiOutput | None:
+        row = self.conn.execute(
+            """
+            SELECT id, kind, model_id, prompt_version, auth_method, status, output, error
+            FROM ai_outputs WHERE id = ?
+            """,
+            (output_id,),
+        ).fetchone()
+        return AiOutput(**dict(row)) if row else None
+
+    # Chat
+
+    def add_chat_message(
+        self, position_id: int, role: str, content: str, ai_output_id: int | None
+    ) -> None:
+        with self.conn:
+            self.conn.execute(
+                """
+                INSERT INTO chat_messages (position_id, role, content, ai_output_id, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (position_id, role, content, ai_output_id, now()),
+            )
+
+    def list_chat_messages(self, position_id: int) -> list[ChatMessage]:
+        rows = self.conn.execute(
+            """
+            SELECT id, role, content, created_at FROM chat_messages
+            WHERE position_id = ? ORDER BY id
+            """,
+            (position_id,),
+        ).fetchall()
+        return [ChatMessage(**dict(row)) for row in rows]
+
+    # Job drafts
+
+    def add_draft(self, position_id: int, ai_output_id: int, text: str) -> int:
+        with self.conn:
+            self.conn.execute(
+                "UPDATE job_drafts SET status = 'superseded' WHERE position_id = ? AND status = 'pending'",
+                (position_id,),
+            )
+            cur = self.conn.execute(
+                """
+                INSERT INTO job_drafts (position_id, ai_output_id, text, status, created_at)
+                VALUES (?, ?, ?, 'pending', ?)
+                """,
+                (position_id, ai_output_id, text, now()),
+            )
+        return cur.lastrowid or 0
+
+    def get_pending_draft(self, position_id: int) -> Draft | None:
+        row = self.conn.execute(
+            """
+            SELECT id, position_id, ai_output_id, text, status FROM job_drafts
+            WHERE position_id = ? AND status = 'pending' ORDER BY id DESC LIMIT 1
+            """,
+            (position_id,),
+        ).fetchone()
+        return Draft(**dict(row)) if row else None
+
+    def get_draft(self, draft_id: int) -> Draft | None:
+        row = self.conn.execute(
+            "SELECT id, position_id, ai_output_id, text, status FROM job_drafts WHERE id = ?",
+            (draft_id,),
+        ).fetchone()
+        return Draft(**dict(row)) if row else None
+
+    def set_draft_status(self, draft_id: int, status: str) -> None:
+        with self.conn:
+            self.conn.execute(
+                "UPDATE job_drafts SET status = ? WHERE id = ?", (status, draft_id)
+            )
+
+    # Interview questions
+
+    def add_questions(
+        self,
+        position_id: int,
+        stage: str,
+        ai_output_id: int,
+        items: list[tuple[str, str, str]],
+    ) -> None:
+        with self.conn:
+            self.conn.executemany(
+                """
+                INSERT INTO interview_questions
+                    (position_id, stage, ai_output_id, question, purpose, good_answer, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'proposed', ?)
+                """,
+                [
+                    (
+                        position_id,
+                        stage,
+                        ai_output_id,
+                        question,
+                        purpose,
+                        good_answer,
+                        now(),
+                    )
+                    for question, purpose, good_answer in items
+                ],
+            )
+
+    def list_questions(self, position_id: int, stage: str) -> list[Question]:
+        rows = self.conn.execute(
+            """
+            SELECT id, position_id, stage, ai_output_id, question, purpose, good_answer, status
+            FROM interview_questions WHERE position_id = ? AND stage = ? ORDER BY id
+            """,
+            (position_id, stage),
+        ).fetchall()
+        return [Question(**dict(row)) for row in rows]
+
+    def get_question(self, question_id: int) -> Question | None:
+        row = self.conn.execute(
+            """
+            SELECT id, position_id, stage, ai_output_id, question, purpose, good_answer, status
+            FROM interview_questions WHERE id = ?
+            """,
+            (question_id,),
+        ).fetchone()
+        return Question(**dict(row)) if row else None
+
+    def update_question(
+        self,
+        question_id: int,
+        *,
+        status: str,
+        question: str,
+        purpose: str,
+        good_answer: str,
+    ) -> None:
+        with self.conn:
+            self.conn.execute(
+                """
+                UPDATE interview_questions
+                SET status = ?, question = ?, purpose = ?, good_answer = ?
+                WHERE id = ?
+                """,
+                (status, question, purpose, good_answer, question_id),
+            )
+
+    def is_set_confirmed(self, position_id: int, stage: str) -> bool:
+        row = self.conn.execute(
+            "SELECT 1 FROM confirmed_question_sets WHERE position_id = ? AND stage = ?",
+            (position_id, stage),
+        ).fetchone()
+        return row is not None
+
+    def confirm_set(self, position_id: int, stage: str) -> None:
+        with self.conn:
+            self.conn.execute(
+                """
+                INSERT OR REPLACE INTO confirmed_question_sets (position_id, stage, confirmed_at)
+                VALUES (?, ?, ?)
+                """,
+                (position_id, stage, now()),
+            )
+
+    # Decisions
+
+    def record_decision(
+        self,
+        *,
+        ai_output_id: int,
+        subject_type: str,
+        subject_id: int,
+        action: str,
+        final_text: str | None,
+    ) -> None:
+        with self.conn:
+            self.conn.execute(
+                """
+                INSERT INTO decisions
+                    (ai_output_id, subject_type, subject_id, action, final_text, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (ai_output_id, subject_type, subject_id, action, final_text, now()),
+            )

@@ -36,13 +36,19 @@ Design for this boundary first. A feature that removes the human from a decision
 - **Linting**: `ruff`. **Type checking**: `ty`. **Tests**: `pytest`.
 - **Frontend**: TypeScript with React, built with Vite. Tests with Vitest and React Testing Library.
 - **Persistence**: SQLite, as a local file under `data/`.
-- **LLM**: Anthropic Claude API, through the `anthropic` SDK.
+- **LLM**: Claude, through the Claude Agent SDK, which runs the Claude Code CLI signed in with the hiring manager's subscription. Local, single-user use only (ADR-0008).
 
 Notes:
 
 - Use the Python 3.12 language level. Do not use features from later versions.
 - Keep the backend and frontend in one repository. The frontend talks to the backend only over HTTP.
-- Do not add a new dependency without a reason written in `docs/decisions/`.
+- Do not add a new dependency without a reason written in an ADR in `docs/adr/`.
+
+## Architecture
+
+The component diagram for the chosen stack is in `docs/architecture/system-overview.md`. Each main functionality has a sequence diagram in `docs/architecture/`, starting from `docs/architecture/README.md`.
+
+Update the matching diagram in the same change when a flow or a component changes.
 
 ## Directory Structure
 
@@ -50,12 +56,24 @@ Folder names are nouns. Each noun names what lives in that folder. When you add 
 
 ```
 .
-├── backend/    Python server application
+├── .claude/    Claude Code settings; rules/ holds path-scoped rules (e.g. for hiring/)
+├── backend/    Python server application (FastAPI, SQLite access, Claude wrapper)
 ├── frontend/   React and TypeScript single-page application
-├── data/       Local runtime data: SQLite database, uploads (not committed)
-├── docs/       Documentation and architecture decision records
+├── data/       Local runtime data: SQLite database, uploads (not committed; created on first run)
+├── docs/       Documentation, architecture diagrams (docs/architecture/) and architecture decision records (docs/adr/, history in docs/adr/archive/)
+├── spec/       Feature tickets, one file per ticket, grouped by status folder (spec/features/)
 └── hiring/     Job descriptions, one folder per position (e.g. hiring/ceo/ceo.md)
 ```
+
+## Current State
+
+As of 2026-10-15.
+
+- Done: project guidance (this file), the CEO job description in `hiring/ceo/`, the ticket structure in `spec/features/`, and the architecture documents in `docs/architecture/`.
+- Backend: built under `backend/` (F0001 to F0003). Dependencies are declared in `pyproject.toml` (`claude-agent-sdk`, `fastapi`, `pydantic`, `uvicorn`; dev: `httpx`, `pytest`, `ruff`, `ty`). The `anthropic` dependency was replaced by the Claude Agent SDK (ADR-0008). All Claude calls go through `backend/app/llm.py`.
+- Frontend: built under `frontend/` (F0001 to F0003). React, TypeScript and Vite, with Vitest tests. Dependencies are listed in ADR-0011.
+- Tickets: Phase 1 tickets F0001 (foundation), F0002 (talk about jobs) and F0003 (talk about interview questions) are in `spec/features/done/`. Start with `spec/features/README.md`.
+- Decisions: ADRs are in `docs/adr/`. ADR-0006 and ADR-0007 record the current dependencies, and their rationale still needs confirming. ADR-0009 (server and listen address), ADR-0010 (SQLite migrations) and ADR-0011 (frontend dependencies) were added with Phase 1. Add an ADR before adding any new dependency.
 
 ## Commands
 
@@ -69,7 +87,23 @@ uv run ty check          # type check
 uv run pytest            # tests
 ```
 
-Frontend commands will be added here once the frontend is set up.
+Run the backend and the frontend locally (two terminals):
+
+```
+cd backend && uv run uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000
+cd frontend && npm install && npm run dev       # http://127.0.0.1:5173, proxies /api to the backend
+```
+
+The LLM features need the Claude Code CLI installed and signed in, and `ANTHROPIC_API_KEY` unset (ADR-0008).
+
+Frontend commands (run in `frontend/`):
+
+```
+npm install             # install dependencies from package-lock.json
+npm test                # Vitest (vitest run)
+npm run typecheck      # tsc --noEmit
+npm run build           # typecheck and production build
+```
 
 ## Open Questions
 
