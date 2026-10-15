@@ -9,6 +9,10 @@ __pycache__/
 # Local runtime data
 data/
 
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
 # Secrets
 .env
 
