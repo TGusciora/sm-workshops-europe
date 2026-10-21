@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { Decision, Question, QuestionSet } from "../types";
+import { StateMessage } from "./StateMessage";
 
 interface Props {
   slug: string;
@@ -19,6 +20,7 @@ export function QuestionReview({ slug }: Props) {
   const [stage, setStage] = useState("");
   const [set, setSet] = useState<QuestionSet | null>(null);
   const [editing, setEditing] = useState<{ id: number; values: Edit } | null>(null);
+  const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,10 +38,12 @@ export function QuestionReview({ slug }: Props) {
     if (!stage) return;
     let cancelled = false;
     setEditing(null);
+    setLoading(true);
     api
       .getQuestions(slug, stage)
       .then((data) => !cancelled && setSet(data))
-      .catch((err: unknown) => !cancelled && setError(err instanceof Error ? err.message : String(err)));
+      .catch((err: unknown) => !cancelled && setError(err instanceof Error ? err.message : String(err)))
+      .finally(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;
     };
@@ -66,30 +70,45 @@ export function QuestionReview({ slug }: Props) {
   }
 
   const approvedCount = set?.questions.filter((q) => q.status === "approved").length ?? 0;
+  const hasQuestions = (set?.questions.length ?? 0) > 0;
+
+  const waitingCount = set?.questions.filter((q) => q.status === "proposed").length ?? 0;
 
   return (
     <section aria-labelledby="questions-heading" className="panel">
-      <h2 id="questions-heading">Interview questions</h2>
-
-      <div className="row">
-        <label htmlFor="stage">Stage</label>
-        <select id="stage" value={stage} onChange={(event) => setStage(event.target.value)} disabled={busy}>
-          {stages.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-        <button type="button" onClick={() => run(() => api.proposeQuestions(slug, stage))} disabled={busy || !stage || set?.confirmed}>
-          Propose questions
-        </button>
+      <div className="panel-header">
+        <div>
+          <h2 id="questions-heading">Interview questions</h2>
+          <p className="note">Each question is decided on its own. Nothing is final until you confirm the set.</p>
+        </div>
+        <div className="toolbar">
+          <div className="stack stage-field">
+            <label htmlFor="stage">Stage</label>
+            <select id="stage" value={stage} onChange={(event) => setStage(event.target.value)} disabled={busy}>
+              {stages.map((name) => (
+                <option key={name} value={name}>
+                  {stageLabel(name)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="button"
+            className={hasQuestions ? undefined : "primary"}
+            onClick={() => run(() => api.proposeQuestions(slug, stage))}
+            disabled={busy || !stage || set?.confirmed}
+          >
+            Propose questions
+          </button>
+        </div>
       </div>
 
-      {set && set.questions.length === 0 && <p>No questions yet for this stage.</p>}
+      {loading && <StateMessage kind="loading">Loading questions…</StateMessage>}
+      {!loading && set && !hasQuestions && <StateMessage kind="empty">No questions yet for this stage.</StateMessage>}
 
       <ul className="questions">
         {set?.questions.map((question) => (
-          <li key={question.id} className={`question question-${question.status}`}>
+          <li key={question.id} className="card">
             {editing?.id === question.id ? (
               <div className="stack">
                 <label htmlFor={`q-${question.id}`}>Question</label>
@@ -124,15 +143,19 @@ export function QuestionReview({ slug }: Props) {
               </div>
             ) : (
               <>
-                <p className="question-text">{question.question}</p>
+                <div className="card-head">
+                  <p className="question-text">{question.question}</p>
+                  <span className={`chip ${statusChipClass(question.status)}`}>{statusLabel(question.status)}</span>
+                </div>
                 <p className="muted">Purpose: {question.purpose}</p>
                 <p className="muted">A good answer covers: {question.good_answer}</p>
-                <p className="status">Status: {question.status}</p>
                 {!set?.confirmed && (
                   <div className="row">
-                    <button type="button" disabled={busy} onClick={() => decide(question, "approve")}>
-                      Approve
-                    </button>
+                    {question.status !== "approved" && (
+                      <button type="button" className="primary-outline" disabled={busy} onClick={() => decide(question, "approve")}>
+                        Approve
+                      </button>
+                    )}
                     <button
                       type="button"
                       disabled={busy}
@@ -154,23 +177,43 @@ export function QuestionReview({ slug }: Props) {
         ))}
       </ul>
 
-      {set && (
-        <div className="row">
+      {set && hasQuestions && (
+        <div className="footer">
           {set.confirmed ? (
-            <p role="status">The {set.stage} set is confirmed.</p>
+            <StateMessage kind="success">The {set.stage} set is confirmed.</StateMessage>
           ) : (
-            <button
-              type="button"
-              disabled={busy || approvedCount === 0}
-              onClick={() => run(() => api.confirmQuestions(slug, stage))}
-            >
-              Confirm approved set ({approvedCount})
-            </button>
+            <>
+              <span className="muted">
+                {approvedCount} approved · {waitingCount} waiting for your decision
+              </span>
+              <button
+                type="button"
+                className="primary"
+                disabled={busy || approvedCount === 0}
+                onClick={() => run(() => api.confirmQuestions(slug, stage))}
+              >
+                Confirm approved set ({approvedCount})
+              </button>
+            </>
           )}
         </div>
       )}
 
-      {error && <p role="alert" className="error">{error}</p>}
+      {error && <StateMessage kind="error">{error}</StateMessage>}
     </section>
   );
+}
+
+function stageLabel(name: string): string {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function statusLabel(status: Question["status"]): string {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function statusChipClass(status: Question["status"]): string {
+  if (status === "approved") return "chip-approved";
+  if (status === "rejected") return "chip-rejected";
+  return "";
 }

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { JobTalk } from "./JobTalk";
@@ -100,5 +100,24 @@ describe("JobTalk", () => {
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     expect((await screen.findByRole("alert")).textContent).toContain("ANTHROPIC_API_KEY is set");
+  });
+
+  it("renders the draft card with its status, editor and both decisions", async () => {
+    mockApi(({ method, path }) => {
+      if (path === "/positions/ceo/chat" && method === "GET") {
+        return { messages: [], draft: { id: 5, text: "Draft.", status: "pending" } };
+      }
+      if (path === "/positions/ceo/job-description") return currentJd;
+      throw new Error(`unexpected ${method} ${path}`);
+    });
+    render(<JobTalk slug="ceo" />);
+
+    const card = await screen.findByLabelText("Draft");
+    expect(within(card).getByRole("heading", { name: "Draft · not saved" })).toBeTruthy();
+    expect(within(card).getByText("Needs your decision")).toBeTruthy();
+    expect(within(card).getByLabelText("Edit the draft before accepting")).toBeTruthy();
+    expect(within(card).getByRole("button", { name: "Accept draft" }).className).toContain("primary");
+    expect(within(card).getByRole("button", { name: "Reject draft" }).className).not.toContain("primary");
+    expect(screen.getByRole("button", { name: "Send" }).className).not.toContain("primary");
   });
 });
