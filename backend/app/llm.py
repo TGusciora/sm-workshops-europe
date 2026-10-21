@@ -36,6 +36,19 @@ class LlmClient(Protocol):
     async def complete(self, system: str, prompt: str) -> str: ...
 
 
+def agent_options(model_id: str, system: str) -> ClaudeAgentOptions:
+    """One isolated turn: no tools, and no settings, CLAUDE.md files, hooks or MCP
+    servers from the machine. The output then depends only on what is recorded."""
+    return ClaudeAgentOptions(
+        system_prompt=system,
+        model=model_id,
+        tools=[],
+        max_turns=1,
+        setting_sources=[],
+        strict_mcp_config=True,
+    )
+
+
 class AgentSdkClient:
     """Runs one turn through the Claude Agent SDK, with no tools enabled."""
 
@@ -43,12 +56,7 @@ class AgentSdkClient:
         self.model_id = model_id
 
     async def complete(self, system: str, prompt: str) -> str:
-        options = ClaudeAgentOptions(
-            system_prompt=system,
-            model=self.model_id,
-            tools=[],
-            max_turns=1,
-        )
+        options = agent_options(self.model_id, system)
         result: str | None = None
         async for message in query(prompt=prompt, options=options):
             if isinstance(message, ResultMessage):
