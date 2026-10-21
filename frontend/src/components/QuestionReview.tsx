@@ -37,6 +37,9 @@ export function QuestionReview({ slug }: Props) {
   useEffect(() => {
     if (!stage) return;
     let cancelled = false;
+    // Drop the previous stage's set so its buttons cannot act while this one loads.
+    setSet(null);
+    setError(null);
     setEditing(null);
     setLoading(true);
     api

@@ -4,6 +4,9 @@ import re
 from pathlib import Path
 
 SLUG_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+PROVENANCE_LINE = re.compile(
+    r"^<!-- Accepted by the hiring manager from AI output \d+\. -->\n?", re.MULTILINE
+)
 
 
 def slugify(title: str) -> str:
@@ -22,8 +25,13 @@ def job_description_path(hiring_dir: Path, slug: str) -> Path:
 
 
 def read_job_description(hiring_dir: Path, slug: str) -> str | None:
+    """The text without the provenance lines. They stay in the file, but sent back to
+    Claude they would be copied into the next draft and point at the wrong output."""
     path = job_description_path(hiring_dir, slug)
-    return path.read_text(encoding="utf-8") if path.is_file() else None
+    if not path.is_file():
+        return None
+    text = PROVENANCE_LINE.sub("", path.read_text(encoding="utf-8"))
+    return text.rstrip() + "\n"
 
 
 def write_job_description(

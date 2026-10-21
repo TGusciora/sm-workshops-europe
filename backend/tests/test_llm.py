@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 from app.database import connect
-from app.llm import LlmCallError, auth_method, call_claude
+from app.llm import LlmCallError, agent_options, auth_method, call_claude
 from app.repository import Repository
 from conftest import FakeClient
 
@@ -14,6 +14,15 @@ def repo(tmp_path) -> Repository:
 
 def run(coro):
     return asyncio.run(coro)
+
+
+def test_agent_options_load_nothing_from_the_machine() -> None:
+    options = agent_options("model", "sys")
+
+    assert options.setting_sources == []
+    assert options.strict_mcp_config is True
+    assert options.tools == []
+    assert options.max_turns == 1
 
 
 def test_auth_method_is_subscription_without_an_api_key() -> None:

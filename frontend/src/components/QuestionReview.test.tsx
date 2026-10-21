@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { QuestionReview } from "./QuestionReview";
-import { mockApi } from "../test/mockApi";
+import { mockApi, problem } from "../test/mockApi";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -103,5 +103,25 @@ describe("QuestionReview", () => {
 
     expect(await screen.findByText("2 approved · 0 waiting for your decision")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Confirm approved set (2)" })).toBeTruthy();
+  });
+
+  it("clears the previous stage when the next stage fails to load", async () => {
+    const user = userEvent.setup();
+    mockApi(({ method, path }) => {
+      if (path === "/stages") return { stages: ["screening", "technical"] };
+      if (path === "/positions/ceo/stages/screening/questions") {
+        return { stage: "screening", confirmed: false, questions: [question(1)] };
+      }
+      if (path === "/positions/ceo/stages/technical/questions") throw problem(500, "technical failed");
+      throw new Error(`unexpected ${method} ${path}`);
+    });
+    render(<QuestionReview slug="ceo" />);
+    await screen.findByText("Question 1?");
+
+    await user.selectOptions(screen.getByLabelText("Stage"), "technical");
+
+    expect(await screen.findByText(/technical failed/)).toBeTruthy();
+    expect(screen.queryByText("Question 1?")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Approve" })).toBeNull();
   });
 });
