@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Job description, phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+button{font:inherit;cursor:pointer}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #18181B; background: #F7F7F5; width: 390px; min-height: 844px; box-sizing: border-box; padding: 16px; display: grid; gap: 16px; align-content: start">
+  <header style="display: grid; gap: 4px">
+    <div style="font-size: 12px; color: #71717A">Onboarding interview</div>
+    <h1 style="margin: 0; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 700">CEO</h1>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 8px">
+    <button type="button" aria-pressed="true" style="min-height: 44px; border: 0; background: #EEF5F2; color: #164538; font-weight: 600; border-radius: 999px; padding: 0 16px">CEO</button>
+    <button type="button" aria-pressed="false" style="min-height: 44px; border: 1px solid #D4D4D8; background: #FFFFFF; color: #3F3F46; font-weight: 500; border-radius: 999px; padding: 0 16px">Data engineer</button>
+  </div>
+
+  <nav aria-label="Sections" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #EFEFEC; border-radius: 12px; padding: 4px">
+    <button type="button" aria-pressed="true" style="min-height: 44px; border: 0; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 9px; box-shadow: 0 1px 2px rgba(0,0,0,0.08)">Job description</button>
+    <button type="button" aria-pressed="false" style="min-height: 44px; border: 0; background: transparent; color: #52525B; font-weight: 500; border-radius: 9px">Interview questions</button>
+  </nav>
+
+  <section aria-labelledby="talk-heading" style="background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 16px; padding: 16px; display: grid; gap: 14px">
+    <h2 id="talk-heading" style="margin: 0; font-size: 17px; font-weight: 600">Conversation</h2>
+    <p style="margin: 0; font-size: 12px; color: #71717A">Nothing is saved until you accept a draft</p>
+
+    <ol aria-label="Conversation" style="list-style: none; padding: 0; margin: 0; display: grid; gap: 10px">
+      <li style="display: flex; justify-content: flex-end">
+        <div style="max-width: 82%; background: #18181B; color: #FFFFFF; border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 14px; line-height: 1.5">Make the scope section shorter and name the reporting line.</div>
+      </li>
+      <li style="display: flex; gap: 8px; align-items: flex-start">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #E6F0EC; color: #1F5C4B; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0">A</div>
+        <div style="max-width: 82%; background: #F4F4F5; border-radius: 14px 14px 14px 4px; padding: 10px 14px; font-size: 14px; line-height: 1.5">Done. The scope section is shorter and the reporting line is named. The draft is below.</div>
+      </li>
+    </ol>
+
+    <div style="border: 1px solid #CFE3DB; background: #F5FAF8; border-radius: 14px; padding: 14px; display: grid; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap">
+        <h3 style="margin: 0; font-size: 15px; font-weight: 600">Draft · not saved</h3>
+        <span style="font-size: 12px; font-weight: 600; color: #1F5C4B; background: #E6F0EC; border-radius: 999px; padding: 3px 10px">Needs your decision</span>
+      </div>
+      <textarea aria-label="Draft text" rows="7" style="width: 100%; box-sizing: border-box; border: 1px solid #D4D4D8; border-radius: 12px; padding: 10px 12px; font: 14px/1.6 Inter, system-ui, sans-serif; background: #FFFFFF; color: #18181B; resize: vertical">CEO
+
+Scope
+Owns company strategy, the budget and the executive team.
+
+Reports to
+The board of directors.</textarea>
+      <button type="button" style="min-height: 44px; border: 0; background: #1F5C4B; color: #FFFFFF; font-weight: 600; border-radius: 10px; padding: 0 16px">Accept draft</button>
+      <button type="button" style="min-height: 44px; border: 1px solid #D4D4D8; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 10px; padding: 0 16px">Reject draft</button>
+    </div>
+
+    <form style="display: grid; gap: 8px">
+      <label for="chat-input" style="font-size: 13px; font-weight: 600; color: #3F3F46">Message</label>
+      <textarea id="chat-input" rows="3" placeholder="Ask for a change" style="width: 100%; box-sizing: border-box; border: 1px solid #D4D4D8; border-radius: 12px; padding: 10px 12px; font: 14px/1.5 Inter, system-ui, sans-serif; background: #FFFFFF; color: #18181B; resize: vertical"></textarea>
+      <button type="submit" style="min-height: 44px; border: 1px solid #D4D4D8; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 10px; padding: 0 16px">Send</button>
+    </form>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

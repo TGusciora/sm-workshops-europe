@@ -78,4 +78,30 @@ describe("QuestionReview", () => {
 
     expect((await screen.findByRole("button", { name: "Confirm approved set (0)" }) as HTMLButtonElement).disabled).toBe(true);
   });
+
+  it("counts approved and waiting questions in the footer and on the confirm button", async () => {
+    const user = userEvent.setup();
+    let statuses = ["approved", "proposed", "rejected"];
+    mockApi(({ method, path, body }) => {
+      if (path === "/stages") return { stages: ["screening"] };
+      if (path === "/positions/ceo/stages/screening/questions" && method === "GET") {
+        return { stage: "screening", confirmed: false, questions: statuses.map((status, index) => question(index + 1, status)) };
+      }
+      if (path === "/questions/2/decision") {
+        expect(body).toEqual({ action: "approve" });
+        statuses = ["approved", "approved", "rejected"];
+        return question(2, "approved");
+      }
+      throw new Error(`unexpected ${method} ${path}`);
+    });
+    render(<QuestionReview slug="ceo" />);
+
+    expect(await screen.findByText("1 approved · 1 waiting for your decision")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Confirm approved set (1)" })).toBeTruthy();
+
+    await user.click(screen.getAllByRole("button", { name: "Approve" })[0]);
+
+    expect(await screen.findByText("2 approved · 0 waiting for your decision")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Confirm approved set (2)" })).toBeTruthy();
+  });
 });

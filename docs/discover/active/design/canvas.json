@@ -1,0 +1,15 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-21T12:00:00Z" },
+  "title": "Onboarding Interview: Modern Redesign",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1280, "h": 900, "title": "Job description, desktop", "expand": "fill" },
+    "Questions.dc.html": { "x": 1360, "y": 0, "w": 1280, "h": 900, "title": "Interview questions, desktop", "expand": "fill" },
+    "Phone.dc.html": { "x": 0, "y": 1020, "w": 390, "h": 844, "title": "Job description, phone" }
+  },
+  "order": ["Main.dc.html", "Questions.dc.html", "Phone.dc.html"],
+  "notes": {},
+  "designSystems": []
+}

@@ -1,13 +1,53 @@
+/* Tokens. Every color, spacing, radius, size and type value in the app comes from here (F0004). */
 :root {
   --bg: #f7f7f5;
   --panel: #ffffff;
   --text: #1d1d1b;
   --muted: #5d5d58;
   --line: #d8d8d2;
+  --control-border: #8a8a84;
   --accent: #2f5d50;
+  --on-accent: #ffffff;
+  --accent-tint: #eef5f2;
+  --focus: #2f5d50;
   --ok: #2f6b3a;
+  --ok-tint: #ecfdf3;
   --error: #9b2c2c;
+  --error-tint: #fbeaea;
+  --neutral-tint: #f4f4f2;
+  --track: #efefec;
+  --bubble-user: #1d1d1b;
+  --on-bubble-user: #ffffff;
+  --draft-tint: #f5faf8;
+  --draft-line: #cfe3db;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   color-scheme: light dark;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.625rem;
+  --font-size-2xl: 2rem;
+
+  --sidebar-width: 264px;
+  --content-width: 1040px;
+  --touch-target: 44px;
+  --transition: 150ms ease;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,9 +57,22 @@
     --text: #ecece8;
     --muted: #a8a8a0;
     --line: #3a3a36;
+    --control-border: #77776f;
     --accent: #7fb7a5;
+    --on-accent: #151514;
+    --accent-tint: #1d2e28;
+    --focus: #7fb7a5;
     --ok: #8fd19e;
+    --ok-tint: #1d2e22;
     --error: #f0a0a0;
+    --error-tint: #3a2121;
+    --neutral-tint: #2a2a27;
+    --track: #2a2a27;
+    --bubble-user: #ecece8;
+    --on-bubble-user: #151514;
+    --draft-tint: #1b2521;
+    --draft-line: #2f4a40;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -29,9 +82,22 @@
   --text: #ecece8;
   --muted: #a8a8a0;
   --line: #3a3a36;
+  --control-border: #77776f;
   --accent: #7fb7a5;
+  --on-accent: #151514;
+  --accent-tint: #1d2e28;
+  --focus: #7fb7a5;
   --ok: #8fd19e;
+  --ok-tint: #1d2e22;
   --error: #f0a0a0;
+  --error-tint: #3a2121;
+  --neutral-tint: #2a2a27;
+  --track: #2a2a27;
+  --bubble-user: #ecece8;
+  --on-bubble-user: #151514;
+  --draft-tint: #1b2521;
+  --draft-line: #2f4a40;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 body {
@@ -39,66 +105,250 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: var(--font-size-base);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-main {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 16px;
+/* Two columns from 600 pixels: a fixed sidebar and the work area. The phone rules are below. */
+.shell {
+  min-height: 100vh;
   display: grid;
-  gap: 16px;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 }
 
-header h1 {
-  margin: 0 0 8px;
-  font-size: 1.6rem;
+.sidebar {
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.workspace {
+  padding: var(--space-6) var(--space-7);
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+  min-width: 0;
+  max-width: var(--content-width);
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-2);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.eyebrow {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 var(--space-2);
+  padding: 0 var(--space-2);
+}
+
+.positions {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+/* A position row. Selected rows get the tint and the "Open" label, not a border. */
+.position {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+  text-align: left;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.position[aria-pressed="true"] {
+  background: var(--accent-tint);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.position-open {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.new-position {
+  margin-top: auto;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.breadcrumb {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--muted);
+}
+
+.page-title {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-2xl);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Status pill for the backend check. Colors come from StateMessage's state-* classes. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: var(--font-size-xs);
+  background: var(--neutral-tint);
+}
+
+.pill::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pill.state-success {
+  background: var(--ok-tint);
+}
+
+.pill.state-error {
+  background: var(--error-tint);
+}
+
+.segmented {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: var(--space-1);
+  background: var(--track);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  justify-self: start;
+}
+
+.segment {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+}
+
+.segment[aria-pressed="true"] {
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: var(--shadow);
 }
 
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
   display: grid;
-  gap: 12px;
+  gap: var(--space-5);
   min-width: 0;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
 }
 
 h2 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
 }
 
 h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
+  font-weight: 600;
 }
 
-.badge {
+/* Loading, empty, error and success messages share this pattern (see StateMessage). */
+.state {
   margin: 0;
+}
+
+.state-loading,
+.state-empty {
   color: var(--muted);
 }
 
-.badge-ok {
-  color: var(--ok);
+.state-error {
+  color: var(--error);
 }
 
-.error,
-.badge-error {
-  color: var(--error);
+.state-success {
+  color: var(--ok);
 }
 
 .row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
   align-items: center;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
 }
 
 .stack {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .muted {
@@ -106,9 +356,19 @@ h3 {
   margin: 0;
 }
 
-.tabs {
-  display: flex;
-  gap: 8px;
+.note {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 button,
@@ -118,17 +378,31 @@ textarea {
   font: inherit;
   color: inherit;
   background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 6px 10px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
   max-width: 100%;
 }
 
 button {
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
 }
 
-button[aria-pressed="true"] {
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+/* Primary: the one filled action on a screen. Secondary is the default button style. */
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Outlined primary: the main action on a card, such as "Approve". */
+button.primary-outline {
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -138,83 +412,292 @@ button:disabled {
   cursor: not-allowed;
 }
 
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+input,
+select {
+  min-width: 0;
+}
+
+select {
+  min-width: 160px;
+}
+
 textarea {
   width: 100%;
   box-sizing: border-box;
   resize: vertical;
+  line-height: 1.6;
 }
 
 ol,
 ul {
-  padding-left: 20px;
+  padding-left: var(--space-5);
   margin: 0;
+}
+
+label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text);
+}
+
+details summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+/* Monospace block for stored text. Scrolls inside its own box, never the page. */
+.code-block {
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--font-size-xs);
+  line-height: 1.6;
+  color: var(--muted);
+  background: var(--bg);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-3) 0 0;
 }
 
 .chat {
   display: grid;
-  gap: 8px;
+  gap: var(--space-3);
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.msg-assistant {
-  color: var(--text);
+.msg {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
 }
 
 .msg-user {
-  color: var(--muted);
+  justify-content: flex-end;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.bubble {
+  margin: 0;
+  max-width: 70%;
+  padding: 10px 14px;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+  background: var(--neutral-tint);
+}
+
+.msg-user .bubble {
+  background: var(--bubble-user);
+  color: var(--on-bubble-user);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+}
+
+.msg-assistant .bubble {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+}
+
+/* A card around one proposal. Used by the draft and by each question. */
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .draft {
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
+  border: 1px solid var(--draft-line);
+  background: var(--draft-tint);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
   display: grid;
-  gap: 8px;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.chip {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  background: var(--neutral-tint);
+  color: var(--text);
+}
+
+.chip-accent {
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+.chip-approved {
+  background: var(--ok-tint);
+  color: var(--ok);
+}
+
+.chip-rejected {
+  background: var(--error-tint);
+  color: var(--error);
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
 .questions {
   list-style: none;
   padding: 0;
+  margin: 0;
   display: grid;
-  gap: 12px;
-}
-
-.question {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 12px;
+  gap: var(--space-3);
 }
 
 .question-text {
   font-weight: 600;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  max-width: 80ch;
   margin: 0;
 }
 
-.question-approved .status {
-  color: var(--ok);
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-4);
 }
 
-.question-rejected .status {
-  color: var(--error);
+.composer > button {
+  justify-self: end;
 }
 
-.scroll {
-  max-height: 260px;
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: var(--bg);
-  padding: 12px;
-  border-radius: 6px;
-  margin: 8px 0 0;
+/* Phone-width screens (below 600 pixels): one column, positions as chips, 44 pixel targets. */
+@media (max-width: 599.98px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .workspace {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .positions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .position {
+    width: auto;
+    min-height: var(--touch-target);
+    background: var(--panel);
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-pill);
+    padding: 0 var(--space-4);
+    font-weight: 500;
+  }
+
+  .position[aria-pressed="true"] {
+    background: var(--accent-tint);
+    border-color: var(--accent-tint);
+  }
+
+  .segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: stretch;
+  }
+
+  .segment {
+    min-height: var(--touch-target);
+    padding: var(--space-2);
+  }
+
+  .panel {
+    padding: var(--space-4);
+  }
+
+  .bubble {
+    max-width: 82%;
+  }
+
+  .toolbar > *,
+  .draft-actions > button,
+  .composer > button {
+    width: 100%;
+  }
+
+  .toolbar > .stage-field {
+    width: 100%;
+  }
+
+  .stage-field select {
+    width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    min-height: var(--touch-target);
+  }
+
+  button {
+    min-width: var(--touch-target);
+  }
+
+  input,
+  select {
+    min-width: 0;
+  }
 }
 
-label {
-  font-weight: 600;
-}
-
-@media (max-width: 600px) {
-  main {
-    padding: 16px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
   }
 }

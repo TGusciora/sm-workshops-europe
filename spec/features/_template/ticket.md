@@ -4,6 +4,20 @@
 
 One or two sentences: what the hiring manager can do once this ticket is done.
 
+## User stories
+
+Write each user story in Gherkin. One `Feature` per ticket, one `Scenario` per story. Keep steps about what the hiring manager does and sees, not about implementation.
+
+```gherkin
+Feature: Short title matching the ticket
+
+  Scenario: The hiring manager accepts a proposed item
+    Given a proposal is shown in the draft view
+    When the hiring manager accepts it
+    Then the accepted text is saved
+    And the saved record links to the AI output that produced it
+```
+
 ## Context
 
 Why this is needed now. Link the architecture diagram, for example `../../../docs/architecture/<feature>.md`.

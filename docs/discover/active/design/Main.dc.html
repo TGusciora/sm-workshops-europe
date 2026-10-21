@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Job description, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+button{font:inherit;cursor:pointer}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #18181B; background: #F7F7F5; min-height: 900px; display: grid; grid-template-columns: 264px minmax(0, 1fr); box-sizing: border-box">
+  <aside style="background: #FFFFFF; border-right: 1px solid #E4E4E7; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+      <div style="width: 28px; height: 28px; border-radius: 8px; background: #1F5C4B; color: #FFFFFF; display: grid; place-items: center; font-weight: 700; font-size: 14px">O</div>
+      <div style="font-weight: 600; font-size: 15px">Onboarding interview</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #71717A; padding: 0 8px 8px">Positions</div>
+      <button type="button" aria-pressed="true" style="display: flex; align-items: center; justify-content: space-between; border: 0; background: #EEF5F2; color: #164538; font-weight: 600; border-radius: 10px; padding: 10px 12px; text-align: left">
+        <span>CEO</span><span style="font-size: 12px; color: #1F5C4B">Open</span>
+      </button>
+      <button type="button" aria-pressed="false" style="display: flex; border: 0; background: transparent; color: #3F3F46; font-weight: 500; border-radius: 10px; padding: 10px 12px; text-align: left">Data engineer</button>
+    </div>
+    <form style="margin-top: auto; display: grid; gap: 8px">
+      <label for="new-position" style="font-size: 13px; font-weight: 600; color: #3F3F46">New position</label>
+      <input id="new-position" placeholder="For example, Head of Sales" style="border: 1px solid #D4D4D8; border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 14px; background: #FFFFFF; color: #18181B">
+      <button type="button" style="border: 1px solid #D4D4D8; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 10px; padding: 10px 14px">Add position</button>
+    </form>
+  </aside>
+
+  <main style="padding: 32px 48px; display: grid; gap: 24px; align-content: start; min-width: 0; box-sizing: border-box">
+    <header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+      <div>
+        <div style="font-size: 13px; color: #71717A">Positions / CEO</div>
+        <h1 style="margin: 4px 0 0; font-size: 32px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 700">CEO</h1>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #166534; background: #ECFDF3; border-radius: 999px; padding: 6px 12px">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #16A34A"></span>Backend ok · subscription login
+      </div>
+    </header>
+
+    <nav aria-label="Sections" style="display: inline-flex; gap: 4px; background: #EFEFEC; border-radius: 12px; padding: 4px; justify-self: start">
+      <button type="button" aria-pressed="true" style="border: 0; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 9px; padding: 8px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.08)">Job description</button>
+      <button type="button" aria-pressed="false" style="border: 0; background: transparent; color: #52525B; font-weight: 500; border-radius: 9px; padding: 8px 16px">Interview questions</button>
+    </nav>
+
+    <section aria-labelledby="talk-heading" style="background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 16px; padding: 24px; display: grid; gap: 20px">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap">
+        <h2 id="talk-heading" style="margin: 0; font-size: 18px; font-weight: 600">Conversation</h2>
+        <span style="font-size: 13px; color: #71717A">Nothing is saved until you accept a draft</span>
+      </div>
+
+      <details>
+        <summary style="cursor: pointer; color: #1F5C4B; font-weight: 500; font-size: 14px">Current job description</summary>
+        <pre style="white-space: pre-wrap; background: #F7F7F5; border-radius: 10px; padding: 16px; margin: 12px 0 0; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; color: #3F3F46">Owns company strategy, the budget and the executive team.</pre>
+      </details>
+
+      <ol aria-label="Conversation" style="list-style: none; padding: 0; margin: 0; display: grid; gap: 12px">
+        <li style="display: flex; justify-content: flex-end">
+          <div style="max-width: 70%; background: #18181B; color: #FFFFFF; border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 14px; line-height: 1.5">Make the scope section shorter and name the reporting line.</div>
+        </li>
+        <li style="display: flex; gap: 10px; align-items: flex-start">
+          <div style="width: 28px; height: 28px; border-radius: 50%; background: #E6F0EC; color: #1F5C4B; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0">A</div>
+          <div style="max-width: 70%; background: #F4F4F5; border-radius: 14px 14px 14px 4px; padding: 10px 14px; font-size: 14px; line-height: 1.5">Done. The scope section is shorter and the reporting line is named. The draft is below.</div>
+        </li>
+      </ol>
+
+      <div style="border: 1px solid #CFE3DB; background: #F5FAF8; border-radius: 14px; padding: 20px; display: grid; gap: 12px">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+          <h3 style="margin: 0; font-size: 15px; font-weight: 600">Draft · not saved</h3>
+          <span style="font-size: 12px; font-weight: 600; color: #1F5C4B; background: #E6F0EC; border-radius: 999px; padding: 3px 10px">Needs your decision</span>
+        </div>
+        <label for="draft-text" style="font-size: 13px; font-weight: 600; color: #3F3F46">Edit the draft before accepting</label>
+        <textarea id="draft-text" rows="8" style="width: 100%; box-sizing: border-box; border: 1px solid #D4D4D8; border-radius: 12px; padding: 12px 14px; font: 14px/1.6 Inter, system-ui, sans-serif; background: #FFFFFF; color: #18181B; resize: vertical">CEO
+
+Scope
+Owns company strategy, the budget and the executive team.
+
+Reports to
+The board of directors.</textarea>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <button type="button" style="border: 0; background: #1F5C4B; color: #FFFFFF; font-weight: 600; border-radius: 10px; padding: 10px 18px">Accept draft</button>
+          <button type="button" style="border: 1px solid #D4D4D8; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 10px; padding: 10px 16px">Reject draft</button>
+        </div>
+      </div>
+
+      <form style="display: grid; gap: 8px">
+        <label for="chat-input" style="font-size: 13px; font-weight: 600; color: #3F3F46">Message</label>
+        <textarea id="chat-input" rows="3" placeholder="Ask for a change to the job description" style="width: 100%; box-sizing: border-box; border: 1px solid #D4D4D8; border-radius: 12px; padding: 12px 14px; font: 14px/1.5 Inter, system-ui, sans-serif; background: #FFFFFF; color: #18181B; resize: vertical"></textarea>
+        <div style="display: flex; justify-content: flex-end">
+          <button type="submit" style="border: 1px solid #D4D4D8; background: #FFFFFF; color: #18181B; font-weight: 600; border-radius: 10px; padding: 10px 16px">Send</button>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

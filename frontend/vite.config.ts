@@ -1,14 +1,14 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
-// The backend listens on 127.0.0.1:8000 only (ADR-0009). The frontend reaches it through /api.
+// The backend listens on 127.0.0.1:8001 only (ADR-0009). The frontend reaches it through /api.
 export default defineConfig({
   plugins: [react()],
   server: {
     host: "127.0.0.1",
     port: 5173,
     proxy: {
-      "/api": { target: "http://127.0.0.1:8000", changeOrigin: false },
+      "/api": { target: "http://127.0.0.1:8001", changeOrigin: false },
     },
   },
   test: {
