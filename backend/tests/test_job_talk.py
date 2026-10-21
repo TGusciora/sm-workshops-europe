@@ -120,3 +120,25 @@ def test_unreadable_reply_is_a_502_and_the_raw_output_is_recorded(
 
 def test_missing_position_is_a_404(client: TestClient) -> None:
     assert client.get("/api/positions/nope/chat").status_code == 404
+
+
+def test_the_next_prompt_does_not_carry_the_provenance_line(
+    client: TestClient, fake_client: FakeClient
+) -> None:
+    slug = create(client)
+    fake_client.replies = [
+        job_talk_reply("# CEO\n\nFirst."),
+        job_talk_reply("# CEO\n\nSecond."),
+    ]
+    draft = client.post(f"/api/positions/{slug}/chat", json={"message": "go"}).json()[
+        "draft"
+    ]
+    client.post(f"/api/drafts/{draft['id']}/decision", json={"action": "approve"})
+
+    client.post(f"/api/positions/{slug}/chat", json={"message": "again"})
+
+    _, prompt = fake_client.calls[1]
+    assert "First." in prompt
+    assert "AI output" not in prompt
+    shown = client.get(f"/api/positions/{slug}/job-description").json()["text"]
+    assert shown == "# CEO\n\nFirst.\n"

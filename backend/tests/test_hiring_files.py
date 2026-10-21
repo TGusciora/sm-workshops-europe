@@ -28,6 +28,20 @@ def test_write_then_read_round_trip(tmp_path) -> None:
 
     text = hiring_files.read_job_description(tmp_path, "ceo")
 
-    assert text is not None
-    assert text.startswith("# CEO\n\nText.\n")
-    assert "AI output 7" in text
+    assert text == "# CEO\n\nText.\n"
+    written = (tmp_path / "ceo" / "ceo.md").read_text(encoding="utf-8")
+    assert written.endswith(
+        "<!-- Accepted by the hiring manager from AI output 7. -->\n"
+    )
+
+
+def test_read_drops_every_provenance_line(tmp_path) -> None:
+    # A draft that copied an earlier provenance line, accepted again.
+    hiring_files.write_job_description(
+        tmp_path,
+        "ceo",
+        "# CEO\n\nText.\n\n<!-- Accepted by the hiring manager from AI output 1. -->",
+        ai_output_id=2,
+    )
+
+    assert hiring_files.read_job_description(tmp_path, "ceo") == "# CEO\n\nText.\n"
