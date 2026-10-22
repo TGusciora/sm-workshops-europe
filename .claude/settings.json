@@ -18,5 +18,8 @@
       "Bash(source .env*)",
       "Bash(. .env*)"
     ]
+  },
+  "enabledPlugins": {
+    "skill-creator@anthropic-plugin-directory": true
   }
 }
