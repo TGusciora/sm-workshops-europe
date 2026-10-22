@@ -4,6 +4,8 @@ import type {
   Decision,
   DraftDecision,
   Health,
+  Interview,
+  InterviewInput,
   JobDescription,
   Position,
   Question,
@@ -62,4 +64,11 @@ export const api = {
   ) => request<Question>("POST", `/questions/${questionId}/decision`, { action, ...edits }),
   confirmQuestions: (slug: string, stage: string) =>
     request<QuestionSet>("POST", `/positions/${slug}/stages/${stage}/confirm`),
+  listInterviews: (slug: string) => request<Interview[]>("GET", `/positions/${slug}/interviews`),
+  planInterview: (slug: string, input: InterviewInput) =>
+    request<Interview>("POST", `/positions/${slug}/interviews`, input),
+  editInterview: (interviewId: number, input: InterviewInput) =>
+    request<Interview>("PUT", `/interviews/${interviewId}`, input),
+  cancelInterview: (interviewId: number) =>
+    request<Interview>("POST", `/interviews/${interviewId}/cancel`),
 };
