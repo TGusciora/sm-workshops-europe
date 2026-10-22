@@ -13,6 +13,7 @@ All diagrams are drafts derived from `CLAUDE.md`. Review them before implementin
 | Talk with the user about jobs | [job-talk.md](job-talk.md) |
 | Talk with the user about interview questions | [interview-questions.md](interview-questions.md) |
 | Candidate screening | [candidate-screening.md](candidate-screening.md) |
+| Interview calendar | [interview-calendar.md](interview-calendar.md) |
 
 ## Conventions
 

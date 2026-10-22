@@ -56,12 +56,12 @@ Folder names are nouns. Each noun names what lives in that folder. When you add 
 
 ```
 .
-├── .claude/    Claude Code settings; rules/ holds path-scoped rules (e.g. for hiring/)
+├── .claude/    Claude Code settings; rules/ holds path-scoped rules (e.g. for hiring/); skills/ holds project skills (e.g. /spec)
 ├── backend/    Python server application (FastAPI, SQLite access, Claude wrapper)
 ├── frontend/   React and TypeScript single-page application
 ├── data/       Local runtime data: SQLite database, uploads (not committed; created on first run)
 ├── docs/       Documentation, architecture diagrams (docs/architecture/) and architecture decision records (docs/adr/, history in docs/adr/archive/)
-├── spec/       Feature tickets, one file per ticket, grouped by status folder (spec/features/)
+├── spec/       Specifications: business specs with Mermaid diagrams (spec/business/), and feature tickets, one file per ticket, grouped by status folder (spec/features/)
 └── hiring/     Job descriptions, one folder per position (e.g. hiring/ceo/ceo.md)
 ```
 

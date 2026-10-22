@@ -74,6 +74,23 @@ MIGRATIONS: list[str] = [
         PRIMARY KEY (position_id, stage)
     );
     """,
+    """
+    CREATE TABLE interviews (
+        id INTEGER PRIMARY KEY,
+        position_id INTEGER NOT NULL REFERENCES positions (id),
+        stage TEXT NOT NULL,
+        starts_at TEXT NOT NULL,
+        duration_minutes INTEGER NOT NULL CHECK (duration_minutes BETWEEN 5 AND 480),
+        interviewer TEXT NOT NULL,
+        location TEXT NOT NULL,
+        candidate_ref TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('planned', 'cancelled')),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    );
+
+    CREATE INDEX interviews_by_position ON interviews (position_id, starts_at);
+    """,
 ]
 
 

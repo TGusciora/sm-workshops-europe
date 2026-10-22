@@ -62,6 +62,19 @@ class Question:
     status: str
 
 
+@dataclass(frozen=True)
+class Interview:
+    id: int
+    position_id: int
+    stage: str
+    starts_at: str
+    duration_minutes: int
+    interviewer: str
+    location: str
+    candidate_ref: str
+    status: Literal["planned", "cancelled"]
+
+
 class Repository:
     """One connection is shared by every request, so every transaction and read holds
     a lock. Without it, a write from one thread could join another thread's open
@@ -301,6 +314,101 @@ class Repository:
                 VALUES (?, ?, ?)
                 """,
                 (position_id, stage, now()),
+            )
+
+    # Interviews (F0010)
+
+    def add_interview(
+        self,
+        position_id: int,
+        *,
+        stage: str,
+        starts_at: str,
+        duration_minutes: int,
+        interviewer: str,
+        location: str,
+        candidate_ref: str,
+    ) -> int:
+        with self._transaction():
+            cur = self.conn.execute(
+                """
+                INSERT INTO interviews
+                    (position_id, stage, starts_at, duration_minutes, interviewer,
+                     location, candidate_ref, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'planned', ?, ?)
+                """,
+                (
+                    position_id,
+                    stage,
+                    starts_at,
+                    duration_minutes,
+                    interviewer,
+                    location,
+                    candidate_ref,
+                    now(),
+                    now(),
+                ),
+            )
+        return cur.lastrowid or 0
+
+    def list_interviews(self, position_id: int) -> list[Interview]:
+        rows = self._all(
+            """
+            SELECT id, position_id, stage, starts_at, duration_minutes, interviewer,
+                   location, candidate_ref, status
+            FROM interviews WHERE position_id = ? ORDER BY starts_at, id
+            """,
+            (position_id,),
+        )
+        return [Interview(**dict(row)) for row in rows]
+
+    def get_interview(self, interview_id: int) -> Interview | None:
+        row = self._one(
+            """
+            SELECT id, position_id, stage, starts_at, duration_minutes, interviewer,
+                   location, candidate_ref, status
+            FROM interviews WHERE id = ?
+            """,
+            (interview_id,),
+        )
+        return Interview(**dict(row)) if row else None
+
+    def update_interview(
+        self,
+        interview_id: int,
+        *,
+        stage: str,
+        starts_at: str,
+        duration_minutes: int,
+        interviewer: str,
+        location: str,
+        candidate_ref: str,
+    ) -> None:
+        with self._transaction():
+            self.conn.execute(
+                """
+                UPDATE interviews
+                SET stage = ?, starts_at = ?, duration_minutes = ?, interviewer = ?,
+                    location = ?, candidate_ref = ?, updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    stage,
+                    starts_at,
+                    duration_minutes,
+                    interviewer,
+                    location,
+                    candidate_ref,
+                    now(),
+                    interview_id,
+                ),
+            )
+
+    def cancel_interview(self, interview_id: int) -> None:
+        with self._transaction():
+            self.conn.execute(
+                "UPDATE interviews SET status = 'cancelled', updated_at = ? WHERE id = ?",
+                (now(), interview_id),
             )
 
     # Decisions

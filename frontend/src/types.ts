@@ -52,3 +52,25 @@ export interface QuestionSet {
   confirmed: boolean;
   questions: Question[];
 }
+
+export type InterviewStatus = "planned" | "cancelled";
+
+export interface Interview {
+  id: number;
+  stage: string;
+  starts_at: string;
+  duration_minutes: number;
+  interviewer: string;
+  location: string;
+  candidate_ref: string;
+  status: InterviewStatus;
+}
+
+export interface InterviewInput {
+  stage: string;
+  starts_at: string;
+  duration_minutes: number;
+  interviewer: string;
+  location: string;
+  candidate_ref: string;
+}

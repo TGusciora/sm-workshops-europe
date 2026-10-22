@@ -1,7 +1,7 @@
 # Candidate screening
 
 Status: draft
-Ticket: none yet
+Ticket: `../../spec/features/planned/F0009-candidate-screening.md`
 Last reviewed: 2026-10-15
 
 ## Purpose

@@ -4,9 +4,10 @@ import { HealthBadge } from "./components/HealthBadge";
 import { StateMessage } from "./components/StateMessage";
 import { JobTalk } from "./components/JobTalk";
 import { QuestionReview } from "./components/QuestionReview";
+import { InterviewCalendar } from "./components/InterviewCalendar";
 import type { Health, Position } from "./types";
 
-type Tab = "job" | "questions";
+type Tab = "job" | "questions" | "interviews";
 
 export function App() {
   const [health, setHealth] = useState<Health | null>(null);
@@ -120,8 +121,18 @@ export function App() {
               >
                 Interview questions
               </button>
+              <button
+                type="button"
+                className="segment"
+                aria-pressed={tab === "interviews"}
+                onClick={() => setTab("interviews")}
+              >
+                Interviews
+              </button>
             </nav>
-            {tab === "job" ? <JobTalk key={selected} slug={selected} /> : <QuestionReview key={selected} slug={selected} />}
+            {tab === "job" && <JobTalk key={selected} slug={selected} />}
+            {tab === "questions" && <QuestionReview key={selected} slug={selected} />}
+            {tab === "interviews" && <InterviewCalendar key={selected} slug={selected} />}
           </>
         )}
       </main>

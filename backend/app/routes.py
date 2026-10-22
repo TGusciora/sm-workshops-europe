@@ -17,7 +17,7 @@ from app.prompts import (
     parse_job_talk_reply,
     parse_questions_reply,
 )
-from app.repository import Draft, Position, Repository
+from app.repository import Draft, Interview, Position, Repository
 from app.schemas import (
     ChatIn,
     ChatMessageOut,
@@ -26,6 +26,8 @@ from app.schemas import (
     DraftDecisionOut,
     DraftOut,
     Health,
+    InterviewIn,
+    InterviewOut,
     JobDescriptionOut,
     PositionIn,
     PositionOut,
@@ -333,6 +335,97 @@ def confirm_questions(slug: str, stage: str, request: Request) -> QuestionSetOut
         )
     repo.confirm_set(position.id, stage)
     return _question_set(repo, position, stage)
+
+
+# Interview calendar (F0010)
+
+
+def _interview_out(interview: Interview) -> InterviewOut:
+    return InterviewOut(
+        id=interview.id,
+        stage=interview.stage,
+        starts_at=interview.starts_at,
+        duration_minutes=interview.duration_minutes,
+        interviewer=interview.interviewer,
+        location=interview.location,
+        candidate_ref=interview.candidate_ref,
+        status=interview.status,
+    )
+
+
+@api.get("/positions/{slug}/interviews", response_model=list[InterviewOut])
+def list_interviews(slug: str, request: Request) -> list[InterviewOut]:
+    repo, _, _ = _state(request)
+    position = _position(repo, slug)
+    return [_interview_out(i) for i in repo.list_interviews(position.id)]
+
+
+@api.post("/positions/{slug}/interviews", response_model=InterviewOut, status_code=201)
+def plan_interview(slug: str, body: InterviewIn, request: Request) -> InterviewOut:
+    repo, _, _ = _state(request)
+    position = _position(repo, slug)
+    stage = _stage(body.stage)
+    interview_id = repo.add_interview(
+        position.id,
+        stage=stage,
+        starts_at=body.starts_at.isoformat(timespec="minutes"),
+        duration_minutes=body.duration_minutes,
+        interviewer=body.interviewer,
+        location=body.location,
+        candidate_ref=body.candidate_ref,
+    )
+    interview = repo.get_interview(interview_id)
+    if interview is None:
+        raise HTTPException(status_code=500, detail="the interview was not saved")
+    return _interview_out(interview)
+
+
+@api.put("/interviews/{interview_id}", response_model=InterviewOut)
+def edit_interview(
+    interview_id: int, body: InterviewIn, request: Request
+) -> InterviewOut:
+    repo, _, _ = _state(request)
+    interview = _interview(repo, interview_id)
+    if interview.status == "cancelled":
+        raise HTTPException(
+            status_code=409, detail="a cancelled interview cannot be edited"
+        )
+    stage = _stage(body.stage)
+    repo.update_interview(
+        interview_id,
+        stage=stage,
+        starts_at=body.starts_at.isoformat(timespec="minutes"),
+        duration_minutes=body.duration_minutes,
+        interviewer=body.interviewer,
+        location=body.location,
+        candidate_ref=body.candidate_ref,
+    )
+    updated = repo.get_interview(interview_id)
+    if updated is None:
+        raise HTTPException(status_code=500, detail="the interview was not saved")
+    return _interview_out(updated)
+
+
+@api.post("/interviews/{interview_id}/cancel", response_model=InterviewOut)
+def cancel_interview(interview_id: int, request: Request) -> InterviewOut:
+    repo, _, _ = _state(request)
+    interview = _interview(repo, interview_id)
+    if interview.status == "cancelled":
+        raise HTTPException(
+            status_code=409, detail="the interview is already cancelled"
+        )
+    repo.cancel_interview(interview_id)
+    updated = repo.get_interview(interview_id)
+    if updated is None:
+        raise HTTPException(status_code=500, detail="the interview was not saved")
+    return _interview_out(updated)
+
+
+def _interview(repo: Repository, interview_id: int) -> Interview:
+    interview = repo.get_interview(interview_id)
+    if interview is None:
+        raise HTTPException(status_code=404, detail="interview not found")
+    return interview
 
 
 def _question_set(repo: Repository, position: Position, stage: str) -> QuestionSetOut:

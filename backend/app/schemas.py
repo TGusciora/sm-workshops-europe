@@ -1,8 +1,9 @@
 """Request and response shapes for the HTTP API (ADR-0006)."""
 
-from typing import Literal
+from datetime import datetime
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints, field_validator
 
 Action = Literal["approve", "edit", "reject"]
 
@@ -80,3 +81,38 @@ class QuestionDecisionIn(BaseModel):
 
 class StagesOut(BaseModel):
     stages: list[str]
+
+
+RequiredText = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
+]
+OptionalText = Annotated[str, StringConstraints(strip_whitespace=True, max_length=200)]
+
+
+class InterviewIn(BaseModel):
+    stage: str = Field(min_length=1, max_length=40)
+    starts_at: datetime
+    duration_minutes: int = Field(ge=5, le=480)
+    interviewer: RequiredText
+    location: OptionalText = ""
+    candidate_ref: RequiredText
+
+    @field_validator("starts_at")
+    @classmethod
+    def local_time_only(cls, value: datetime) -> datetime:
+        # The calendar keeps local wall-clock time (F0010). A zone would be stored as text
+        # and sorted wrongly, so it is refused.
+        if value.tzinfo is not None:
+            raise ValueError("send the start time without a time zone")
+        return value
+
+
+class InterviewOut(BaseModel):
+    id: int
+    stage: str
+    starts_at: str
+    duration_minutes: int
+    interviewer: str
+    location: str
+    candidate_ref: str
+    status: Literal["planned", "cancelled"]
