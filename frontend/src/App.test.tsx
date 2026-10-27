@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
@@ -18,7 +18,7 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByText(/Backend ok/)).toBeTruthy();
+    expect((await screen.findByText(/Backend ok/)).className).toContain("state-success");
     expect(screen.getByRole("button", { name: "CEO" })).toBeTruthy();
   });
 
@@ -75,6 +75,7 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Data engineer" }).getAttribute("aria-pressed")).toBe("false");
     expect(screen.getByRole("heading", { level: 1, name: "CEO" })).toBeTruthy();
     expect(screen.getByText("Positions / CEO")).toBeTruthy();
+    expect(screen.getByText("Open")).toBeTruthy();
   });
 
   it("shows the new position form with its placeholder and label", async () => {
@@ -106,6 +107,9 @@ describe("App", () => {
 
     const job = screen.getByRole("button", { name: "Job description" });
     const questions = screen.getByRole("button", { name: "Interview questions" });
+    expect(within(screen.getByRole("navigation", { name: "Sections" })).getAllByRole("button").map((b) => b.textContent)).toEqual(
+      expect.arrayContaining(["Job description", "Interview questions"]),
+    );
     expect(job.getAttribute("aria-pressed")).toBe("true");
     expect(questions.getAttribute("aria-pressed")).toBe("false");
 
