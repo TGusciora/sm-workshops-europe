@@ -21,5 +21,8 @@
   },
   "enabledPlugins": {
     "skill-creator@anthropic-plugin-directory": true
+  },
+  "env": {
+    "CLAUDE_CODE_MAX_SUBAGENT_DEPTH": "4"
   }
 }
