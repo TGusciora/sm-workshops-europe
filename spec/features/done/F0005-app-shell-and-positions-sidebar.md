@@ -39,14 +39,14 @@ Today `App.tsx` renders the header, the positions panel and the tabs as one stac
 
 ## Acceptance criteria
 
-- [ ] At 600 pixels and wider, the layout is a fixed 264 pixel sidebar and a fluid main column with 32 pixel top and bottom and 48 pixel side padding.
-- [ ] The sidebar shows the brand mark, the product name "Onboarding interview" and the list "Positions".
-- [ ] The selected position has the selected style and the "Open" label. Unselected positions use the plain style.
-- [ ] The "New position" form sits at the bottom of the sidebar, with its label, input, placeholder "For example, Head of Sales" and "Add position" button.
-- [ ] The main header shows a breadcrumb "Positions / <title>" and the position title as the page heading (`h1`).
-- [ ] The backend status pill uses the green style when the health check succeeds and the error style when it fails (see F0004 for the status colors).
-- [ ] The existing position behavior (select, add, error message) works unchanged. Existing Vitest tests still pass.
-- [ ] `npm test`, `npm run typecheck` and `npm run build` pass in `frontend/`.
+- [x] At 600 pixels and wider, the layout is a fixed 264 pixel sidebar and a fluid main column with 32 pixel top and bottom and 48 pixel side padding.
+- [x] The sidebar shows the brand mark, the product name "Onboarding interview" and the list "Positions".
+- [x] The selected position has the selected style and the "Open" label. Unselected positions use the plain style.
+- [x] The "New position" form sits at the bottom of the sidebar, with its label, input, placeholder "For example, Head of Sales" and "Add position" button.
+- [x] The main header shows a breadcrumb "Positions / <title>" and the position title as the page heading (`h1`).
+- [x] The backend status pill uses the green style when the health check succeeds and the error style when it fails (see F0004 for the status colors).
+- [x] The existing position behavior (select, add, error message) works unchanged. Existing Vitest tests still pass.
+- [x] `npm test`, `npm run typecheck` and `npm run build` pass in `frontend/`.
 
 ## Human decisions
 

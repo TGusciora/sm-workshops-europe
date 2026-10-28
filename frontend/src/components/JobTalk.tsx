@@ -125,7 +125,7 @@ export function JobTalk({ slug }: Props) {
           <label htmlFor="draft-text">Edit the draft before accepting</label>
           <textarea
             id="draft-text"
-            rows={14}
+            rows={8}
             value={draftText}
             onChange={(event) => setDraftText(event.target.value)}
             disabled={busy}
