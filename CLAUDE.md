@@ -44,6 +44,10 @@ Notes:
 - Keep the backend and frontend in one repository. The frontend talks to the backend only over HTTP.
 - Do not add a new dependency without a reason written in an ADR in `docs/adr/`.
 
+## Markdown Index
+
+The list of all `.md` files in the repository is in `brain.md` at the root (`[[path]]` links, `archive/` excluded). A Stop hook (`.claude/hooks/brain.py`) rebuilds it after each turn. Read it to find documents; do not edit it by hand.
+
 ## Architecture
 
 The component diagram for the chosen stack is in `docs/architecture/system-overview.md`. Each main functionality has a sequence diagram in `docs/architecture/`, starting from `docs/architecture/README.md`.
@@ -56,7 +60,7 @@ Folder names are nouns. Each noun names what lives in that folder. When you add 
 
 ```
 .
-├── .claude/    Claude Code settings; agents/ holds project subagents (e.g. executor, which builds features); rules/ holds path-scoped rules (e.g. for hiring/); skills/ holds project skills (e.g. /spec)
+├── .claude/    Claude Code settings; agents/ holds project subagents (e.g. executor, which builds features); rules/ holds path-scoped rules (e.g. for hiring/); skills/ holds project skills (e.g. /spec); hooks/ holds the PreToolUse guard that blocks .env reads and dangerous commands
 ├── backend/    Python server application (FastAPI, SQLite access, Claude wrapper)
 ├── frontend/   React and TypeScript single-page application
 ├── data/       Local runtime data: SQLite database, uploads (not committed; created on first run)
