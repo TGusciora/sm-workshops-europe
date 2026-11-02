@@ -9,8 +9,10 @@ from fastapi import FastAPI
 from app.config import Settings, default_settings
 from app.database import connect
 from app.llm import AgentSdkClient, LlmClient, auth_method
+from app.mock_servers import build_registry
 from app.repository import Repository
 from app.routes import api
+from app.tool_routes import tool_api
 
 logger = logging.getLogger("app")
 
@@ -30,5 +32,7 @@ def create_app(
     app.state.settings = settings
     app.state.repo = Repository(conn)
     app.state.client = client or AgentSdkClient(settings.model_id)
+    app.state.tools = build_registry(settings)
     app.include_router(api)
+    app.include_router(tool_api)
     return app
