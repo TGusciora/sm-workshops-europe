@@ -37,6 +37,7 @@ Decisions that shape the application, one file per decision. A decision is recor
 | [0009](0009-backend-server-and-listen-address.md) | Backend server and listen address | Accepted |
 | [0010](0010-sqlite-migrations-with-user-version.md) | SQLite migrations with user_version | Accepted |
 | [0011](0011-frontend-dependencies.md) | Frontend dependencies | Accepted |
+| [0012](0012-mcp-server-for-tool-access.md) | MCP server for tool access | Accepted |
 
 ## Index: archive
 

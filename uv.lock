@@ -423,6 +423,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "claude-agent-sdk" },
     { name = "fastapi" },
+    { name = "mcp" },
     { name = "pydantic" },
     { name = "uvicorn" },
 ]
@@ -439,6 +440,7 @@ dev = [
 requires-dist = [
     { name = "claude-agent-sdk", specifier = ">=0.2.167" },
     { name = "fastapi" },
+    { name = "mcp", specifier = ">=2.3.0" },
     { name = "pydantic", specifier = ">=2" },
     { name = "uvicorn", specifier = ">=0.54.0" },
 ]
