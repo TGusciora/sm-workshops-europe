@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "onboarding-interviewer": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "-m", "app.mcp_server", "--role", "interviewer"],
+      "env": {
+        "PYTHONPATH": "backend",
+        "INTERVIEWER_TOKEN": "${INTERVIEWER_TOKEN}"
+      }
+    },
+    "onboarding-manager": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "-m", "app.mcp_server", "--role", "manager"],
+      "env": {
+        "PYTHONPATH": "backend",
+        "MANAGER_TOKEN": "${MANAGER_TOKEN}"
+      }
+    }
+  }
+}
