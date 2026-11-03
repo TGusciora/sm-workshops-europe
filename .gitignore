@@ -12,6 +12,9 @@ data/
 # Frontend
 frontend/node_modules/
 frontend/dist/
+# Playwright output (ADR-0013)
+frontend/test-results/
+frontend/playwright-report/
 
 # Secrets
 .env
