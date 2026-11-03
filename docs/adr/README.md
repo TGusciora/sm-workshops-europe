@@ -38,6 +38,7 @@ Decisions that shape the application, one file per decision. A decision is recor
 | [0010](0010-sqlite-migrations-with-user-version.md) | SQLite migrations with user_version | Accepted |
 | [0011](0011-frontend-dependencies.md) | Frontend dependencies | Accepted |
 | [0012](0012-mcp-server-for-tool-access.md) | MCP server for tool access | Accepted |
+| [0013](0013-playwright-end-to-end-tests.md) | Playwright for end-to-end tests | Accepted |
 
 ## Index: archive
 
