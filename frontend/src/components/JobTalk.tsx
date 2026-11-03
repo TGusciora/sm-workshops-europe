@@ -12,7 +12,7 @@ interface Props {
 export function JobTalk({ slug }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [draftText, setDraftText] = useState("");
+  const [draftMessage, setDraftMessage] = useState("");
   const [currentText, setCurrentText] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export function JobTalk({ slug }: Props) {
         if (cancelled) return;
         setMessages(chat.messages);
         setDraft(chat.draft);
-        setDraftText(chat.draft?.text ?? "");
+        setDraftMessage(chat.draft?.text ?? "");
         setCurrentText(jd.text);
       })
       .catch((err: unknown) => !cancelled && setError(message(err)))
@@ -49,7 +49,7 @@ export function JobTalk({ slug }: Props) {
       const chat = await api.sendChat(slug, input.trim());
       setMessages(chat.messages);
       setDraft(chat.draft);
-      setDraftText(chat.draft?.text ?? "");
+      setDraftMessage(chat.draft?.text ?? "");
       setSavedPath(null);
       setInput("");
     } catch (err) {
@@ -65,11 +65,11 @@ export function JobTalk({ slug }: Props) {
     setError(null);
     try {
       // Accepting an unchanged draft is "approve"; accepting changed text is "edit".
-      const action = reject ? "reject" : draftText === draft.text ? "approve" : "edit";
-      const result = await api.decideDraft(draft.id, action, draftText);
+      const action = reject ? "reject" : draftMessage === draft.text ? "approve" : "edit";
+      const result = await api.decideDraft(draft.id, action, draftMessage);
       setDraft(null);
       setSavedPath(result.path);
-      if (result.path) setCurrentText(draftText);
+      if (result.path) setCurrentText(draftMessage);
     } catch (err) {
       setError(message(err));
     } finally {
@@ -126,13 +126,13 @@ export function JobTalk({ slug }: Props) {
           <textarea
             id="draft-text"
             rows={8}
-            value={draftText}
-            onChange={(event) => setDraftText(event.target.value)}
+            value={draftMessage}
+            onChange={(event) => setDraftMessage(event.target.value)}
             disabled={busy}
           />
           <div className="row draft-actions">
             <button type="button" className="primary" onClick={() => decide(false)} disabled={busy}>
-              {draftText === draft.text ? "Accept draft" : "Accept edited draft"}
+              {draftMessage === draft.text ? "Accept draft" : "Accept edited draft"}
             </button>
             <button type="button" onClick={() => decide(true)} disabled={busy}>
               Reject draft
