@@ -1,4 +1,8 @@
 {
+  "env": {
+    "CLAUDE_CODE_MAX_SUBAGENT_DEPTH": "4",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "deny": [
       "Read(./.env)",
@@ -100,10 +104,16 @@
     ]
   },
   "enabledPlugins": {
-    "skill-creator@anthropic-plugin-directory": true
+    "skill-creator@anthropic-plugin-directory": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript7-lsp@sm-workshops": true
   },
-  "env": {
-    "CLAUDE_CODE_MAX_SUBAGENT_DEPTH": "4",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  "extraKnownMarketplaces": {
+    "sm-workshops": {
+      "source": {
+        "source": "directory",
+        "path": "."
+      }
+    }
   }
 }
