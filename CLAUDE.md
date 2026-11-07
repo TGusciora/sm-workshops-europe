@@ -66,6 +66,8 @@ Folder names are nouns. Each noun names what lives in that folder. When you add 
 ├── data/       Local runtime data: SQLite database, uploads (not committed; created on first run)
 ├── docs/       Documentation, architecture diagrams (docs/architecture/) and architecture decision records (docs/adr/, history in docs/adr/archive/)
 ├── spec/       Specifications: business specs with Mermaid diagrams (spec/business/), and feature tickets, one file per ticket, grouped by status folder (spec/features/)
+├── scripts/    Developer helper scripts (POSIX sh); size compares the current changes with the base and reports whether they are too big to review (--enforce makes it fail)
+├── plugins/    Claude Code plugins shipped with this repo (registered in .claude-plugin/marketplace.json); typescript7-lsp runs the TypeScript 7 language server from frontend/
 └── hiring/     Job descriptions, one folder per position (e.g. hiring/ceo/ceo.md)
 ```
 
@@ -89,6 +91,14 @@ uv run ruff check        # lint
 uv run ruff format       # format
 uv run ty check          # type check
 uv run pytest            # tests
+```
+
+Review size (no dependencies, POSIX sh):
+
+```
+scripts/size                 # advisory: report changed files, lines and folders vs origin/main
+scripts/size --enforce       # exit 1 when the changes are too big to review and should be split
+scripts/size --base main --max-files 20 --max-lines 400
 ```
 
 Run the backend and the frontend locally (two terminals):

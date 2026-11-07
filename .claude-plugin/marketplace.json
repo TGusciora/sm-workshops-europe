@@ -1,0 +1,11 @@
+{
+  "name": "sm-workshops",
+  "owner": { "name": "sm-workshops-europe team" },
+  "plugins": [
+    {
+      "name": "typescript7-lsp",
+      "source": "./plugins/typescript7-lsp",
+      "description": "TypeScript 7 language server for the frontend, using the project's own typescript dependency"
+    }
+  ]
+}

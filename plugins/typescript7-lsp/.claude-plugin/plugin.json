@@ -1,0 +1,5 @@
+{
+  "name": "typescript7-lsp",
+  "description": "TypeScript 7 language server for the frontend, started from the project's own typescript dependency (tsc --lsp --stdio).",
+  "version": "1.0.0"
+}
